@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import CoinCard from './components/CoinCard';
-import LimitSelector from './components/LimitSelector';
-import FilterInput from './components/FilterInput';
-import SortSelector from './components/SortSelector';
-
+import {Routes, Route} from 'react-router'
+import HomePage from './pages/home';
+import AboutPage from './pages/about';
+import Header from './components/Header';
+import NotFoundPage from './pages/not-found';
+import CoinDetailsPage from './pages/coin-details';
 const API_URL = import.meta.env.VITE_API_URL;
 
 const App = () => {
-  // &order=market_cap_desc&per_page=10&page=1&sparkline=false
 
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,8 +16,8 @@ const App = () => {
   const [limit, setLimit] = useState(10);
   const [filter, setFilter] = useState('');
   const [sortBy,setSortBy] = useState('market_cap_desc'); 
-  useEffect(() => {
 
+  useEffect(() => {
     // async/await syntax
     const fetchCoins = async () => {
       try {
@@ -52,54 +52,26 @@ const App = () => {
     //    })
   }, [limit]);
 
-
-  const filteredCoins = coins.filter((coin) => { 
-    return (
-      coin.name.toLowerCase().includes(filter.toLowerCase()) || 
-      coin.symbol.toLowerCase().includes(filter.toLowerCase())
-    );
-   })
-    .slice() // add slice to make it return a copy of the array to avoid mutating original arr
-    .sort((a,b) => {
-      switch (sortBy) {
-        case 'market_cap_desc':
-          return b.market_cap - a.market_cap;
-        case 'market_cap_asc':
-          return a.market_cap - b.market_cap;
-        case 'price_desc':
-          return b.current_price- a.current_price;
-        case 'price_asc':
-          return a.current_price - b.current_price;
-        case 'change_desc':
-          return b.price_change_percentage_24h - a.price_change_percentage_24h        
-        case 'change_asc':
-          return a.price_change_percentage_24h - b.price_change_percentage_24h        
-        default:
-          break;
-      }
-    })
   return ( 
-    <div>
-      <h1>
-        🚀 Crypto Dash
-      </h1>
-      {loading && <p>Loading ...</p>}
-      {error && <div className='error'>{error}</div>}
-
-      <div className="top-controls">
-        <FilterInput filter={filter} onFilterChange={setFilter}/>
-        <LimitSelector onChange={(e) => {return setLimit(Number(e.target.value))}} limit={limit}/>
-        <SortSelector sortBy={sortBy} onSortChange={setSortBy}/>
-      </div>
-      
-      {!loading && !error && (
-        <main className="grid">
-          {filteredCoins.length > 0 ?filteredCoins.map((coin) => (
-            <CoinCard key={coin.id} coin={coin} />
-          )) : (<p>No Matching Coins</p>)}
-        </main>
-      )}
-    </div>
+    <>
+    <Header />
+    <Routes> GET /about
+      <Route path='/' element={<HomePage 
+        coins={coins}
+        filter={filter}
+        setFilter={setFilter}
+        limit={limit}
+        setLimit={setLimit}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        loading={loading}
+        error={error}
+      />} />
+      <Route path='/about' element={<AboutPage />}/>
+      <Route path='/coin/:id' element={<CoinDetailsPage />} />
+      <Route path='*' element={<NotFoundPage />} />
+    </Routes>
+    </>
    );
 }
  
