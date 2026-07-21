@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import {Routes, Route} from 'react-router'
+import { Analytics } from '@vercel/analytics/react';
 import HomePage from './pages/home';
 import AboutPage from './pages/about';
 import Header from './components/Header';
@@ -71,6 +72,7 @@ const App = () => {
       <Route path='/coin/:id' element={<CoinDetailsPage />} />
       <Route path='*' element={<NotFoundPage />} />
     </Routes>
+    <Analytics />
     </>
    );
 }
