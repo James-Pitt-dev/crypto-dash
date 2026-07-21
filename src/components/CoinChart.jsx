@@ -33,16 +33,17 @@ const CoinChart = ({coinId}) => {
     useState(() => {
         const fetchPrices = async () => {
             
-            const res = await fetch(`${API_URL}/${coinId}/market_chart?vs_currency=usd&days=7`);
+            try {
+                            const res = await fetch(`${API_URL}/${coinId}/market_chart?vs_currency=usd&days=7`);
             const data = await res.json();
-
+            console.log(data)
             const prices = data.prices.map((price) => (
                 {
                     x: price[0],
                     y: price[1]
                 }
             ));
-
+            console.log(prices)
             // chartdata object shape is just copying what the chartjs docs want as formatted data
             setChartData({
                 datasets: [
@@ -57,8 +58,15 @@ const CoinChart = ({coinId}) => {
                     },
                 ],
             });
+            } catch (err) {
+                console.log(err.message);
+            } finally {
+                setLoading(false);
+            }
 
-            setLoading(false);
+
+
+            // setLoading(false);
         };
          fetchPrices();
     }, [coinId])
