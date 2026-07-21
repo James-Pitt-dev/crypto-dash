@@ -63,9 +63,6 @@ const CoinChart = ({coinId}) => {
             } finally {
                 setLoading(false);
             }
-
-
-
             // setLoading(false);
         };
          fetchPrices();
